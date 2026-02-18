@@ -20,6 +20,16 @@ namespace TempManager.Controllers
         [HttpPost]
         public IActionResult Add(Temp temp)
         {
+            if (temp.Date.HasValue)
+            {
+                Temp? existing = data.Temps.FirstOrDefault(t => t.Date == temp.Date);
+
+                if (existing != null)
+                {
+                    ModelState.AddModelError(nameof(Temp.Date), "That date is already in the database.");
+                }
+            }
+
             if (ModelState.IsValid)
             {
                 data.Temps.Add(temp);
@@ -29,6 +39,7 @@ namespace TempManager.Controllers
             }
             else
             {
+                ModelState.AddModelError(string.Empty, "Please correct all errors");
                 return View(temp);
             }
         }
